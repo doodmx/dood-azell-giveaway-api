@@ -5,9 +5,12 @@ require("dotenv").config();
 fastify.register(require("./dbConnector"));
 fastify.register(require("./routes"));
 // Run the server!
-fastify.listen(process.env.PORT || 3000, "0.0.0.0", function (err, address) {
-  if (err) {
+const start = async () => {
+  try {
+    await fastify.listen(process.env.PORT || 3000, "0.0.0.0");
+  } catch (err) {
     fastify.log.error(err);
     process.exit(1);
   }
-});
+};
+start();
