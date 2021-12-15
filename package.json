@@ -1,0 +1,30 @@
+{
+  "name": "azell-giveaway-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "dev": "nodemon sever.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/doodmx/dood-azell-giveaway-api.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/doodmx/dood-azell-giveaway-api/issues"
+  },
+  "homepage": "https://github.com/doodmx/dood-azell-giveaway-api#readme",
+  "dependencies": {
+    "fastify": "^3.25.0",
+    "fastify-mongodb": "^4.1.1",
+    "fastify-plugin": "^3.0.0"
+  },
+  "devDependencies": {
+    "dotenv": "^10.0.0",
+    "nodemon": "^2.0.15"
+  }
+}
