@@ -8,7 +8,7 @@ fastify.register(require("./routes"));
 const start = async () => {
   try {
     console.log(process.env.PORT);
-    await fastify.listen(parseInt(process.env.PORT, 10) || 3000);
+    await fastify.listen(process.env.PORT || 3000);
   } catch (err) {
     fastify.log.error(err);
     process.exit(1);
