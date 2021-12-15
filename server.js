@@ -7,7 +7,7 @@ fastify.register(require("./routes"));
 // Run the server!
 const start = async () => {
   try {
-    const PORT = process.PORT || 3000;
+    const PORT = process.env.PORT || 3000;
     console.log(PORT);
     await fastify.listen(PORT);
   } catch (err) {
