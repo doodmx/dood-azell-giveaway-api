@@ -6,6 +6,7 @@ fastify.register(require("./dbConnector"));
 fastify.register(require("fastify-cors"), {
   // put your options here
 });
+fastify.register(require("fastify-formbody"));
 fastify.register(require("./routes"));
 // Run the server!
 const start = async () => {
