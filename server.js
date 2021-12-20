@@ -3,6 +3,9 @@ const fastify = require("fastify")({ logger: true });
 require("dotenv").config();
 
 fastify.register(require("./dbConnector"));
+fastify.register(require("fastify-cors"), {
+  // put your options here
+});
 fastify.register(require("./routes"));
 // Run the server!
 const start = async () => {
