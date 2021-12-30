@@ -24,7 +24,8 @@
     "fastify-cors": "^6.0.2",
     "fastify-formbody": "^5.2.0",
     "fastify-mongodb": "^4.1.1",
-    "fastify-plugin": "^3.0.0"
+    "fastify-plugin": "^3.0.0",
+    "mongodb": "^4.2.2"
   },
   "devDependencies": {
     "nodemon": "^2.0.15"

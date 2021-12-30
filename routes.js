@@ -1,3 +1,5 @@
+const ObjectID = require("mongodb").ObjectID;
+
 async function routes(fastify, options) {
   const collection = fastify.mongo.db.collection("invest");
 
@@ -19,14 +21,47 @@ async function routes(fastify, options) {
       throw error;
     }
   });
-  /*
-  fastify.get("/animals/:animal", async (request, reply) => {
-    const result = await collection.findOne({ animal: request.params.animal });
-    if (!result) {
-      throw new Error("Invalid value");
+
+  fastify.put("/invest/:id/:status", async (request, reply) => {
+    try {
+      const statusInvest = ["interested", "noInterested"];
+      const { id, status } = request.params;
+      const existStatus = statusInvest.indexOf(status);
+      const existInvest = await collection.findOne({ _id: ObjectID(id) });
+      if (!existInvest) {
+        throw {
+          message: "No hay registros relacionados con el ID",
+          status: 400,
+        };
+      }
+      if (existStatus < 0) {
+        throw {
+          message:
+            "El status no es valido, solo se acepta interested, noInterested",
+          status: 400,
+        };
+      }
+      const updateDoc = {
+        $set: {
+          status,
+        },
+      };
+      const result = await collection.updateOne(
+        { _id: ObjectID(id) },
+        updateDoc,
+        {
+          upsert: true,
+        }
+      );
+
+      if (!result) {
+        throw new Error("Invalid value");
+      }
+      return result;
+    } catch (error) {
+      throw error;
     }
-    return result;
-  });*/
+  });
 
   const investBodyJsonSchema = {
     type: "object",
@@ -35,6 +70,7 @@ async function routes(fastify, options) {
       name: { type: "string", minimum: 3, maxLength: 255 },
       email: { type: "string", minimum: 2, maxLength: 255 },
       phoneNumber: { type: "string", minimum: 10, maxLength: 13 },
+      possibleInvestment: { type: "string", minimum: 1, maxLength: 20 },
     },
   };
 
@@ -44,7 +80,8 @@ async function routes(fastify, options) {
 
   fastify.post("/invest", { schema }, async (request, reply) => {
     try {
-      const { email } = request.body;
+      const invest = request.body;
+      const { email } = invest;
       if (!email.includes("@"))
         throw {
           message: "La dirección de coreo electronico no es valida",
@@ -58,7 +95,8 @@ async function routes(fastify, options) {
           status: 400,
         };
       }
-      const result = await collection.insertOne(request.body);
+      invest.status = "prospect";
+      const result = await collection.insertOne(invest);
       return result;
     } catch (error) {
       throw error;
