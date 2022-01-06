@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/doodmx/dood-azell-giveaway-api#readme",
   "dependencies": {
+    "@hapi/joi": "^17.1.1",
     "dotenv": "^10.0.0",
     "fastify": "^3.25.0",
     "fastify-cors": "^6.0.2",

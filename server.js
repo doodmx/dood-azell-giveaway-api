@@ -1,13 +1,14 @@
 // Require the framework and instantiate it
 const fastify = require("fastify")({ logger: true });
 require("dotenv").config();
-
+//
 fastify.register(require("./dbConnector"));
 fastify.register(require("fastify-cors"), {
   // put your options here
 });
 fastify.register(require("fastify-formbody"));
-fastify.register(require("./routes"));
+fastify.register(require("./invest.routes"));
+fastify.register(require("./credit-card.routes"));
 // Run the server!
 const start = async () => {
   try {

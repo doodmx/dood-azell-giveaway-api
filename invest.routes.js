@@ -1,7 +1,8 @@
+const Joi = require("@hapi/joi");
 const ObjectID = require("mongodb").ObjectID;
 
 async function routes(fastify, options) {
-  const collection = fastify.mongo.db.collection("invest");
+  const investCollection = fastify.mongo.db.collection("invest");
 
   fastify.get("/", async (request, reply) => {
     return { hello: "world" };
@@ -9,7 +10,7 @@ async function routes(fastify, options) {
 
   fastify.get("/invest", async (request, reply) => {
     try {
-      const result = await collection.find().toArray();
+      const result = await investCollection.find().toArray();
       if (result.length === 0) {
         throw {
           message: "Sin registros",
@@ -27,7 +28,7 @@ async function routes(fastify, options) {
       const statusInvest = ["interested", "noInterested"];
       const { id, status } = request.params;
       const existStatus = statusInvest.indexOf(status);
-      const existInvest = await collection.findOne({ _id: ObjectID(id) });
+      const existInvest = await investCollection.findOne({ _id: ObjectID(id) });
       if (!existInvest) {
         throw {
           message: "No hay registros relacionados con el ID",
@@ -46,7 +47,7 @@ async function routes(fastify, options) {
           status,
         },
       };
-      const result = await collection.updateOne(
+      const result = await investCollection.updateOne(
         { _id: ObjectID(id) },
         updateDoc,
         {
@@ -74,34 +75,48 @@ async function routes(fastify, options) {
     },
   };
 
-  const schema = {
-    body: investBodyJsonSchema,
-  };
-
-  fastify.post("/invest", { schema }, async (request, reply) => {
-    try {
-      const invest = request.body;
-      const { email } = invest;
-      if (!email.includes("@"))
-        throw {
-          message: "La dirección de coreo electronico no es valida",
-          status: 400,
-        };
-      const emailExist = await collection.findOne({ email });
-      if (emailExist) {
-        throw {
-          message:
-            "El correo electronico ya esta registrado, por favor registre otro",
-          status: 400,
-        };
+  fastify.post(
+    "/invest",
+    {
+      schema: {
+        body: Joi.object()
+          .keys({
+            name: Joi.string().min(1).max(250).required(),
+            email: Joi.string().email().required(),
+            phoneNumber: Joi.string().min(10).max(12).required(),
+          })
+          .required(),
+      },
+      validatorCompiler: ({ schema }) => {
+        return (data) => schema.validate(data);
+      },
+    },
+    async (request, reply) => {
+      try {
+        const invest = request.body;
+        const { email } = invest;
+        if (!email.includes("@"))
+          throw {
+            message: "La dirección de coreo electronico no es valida",
+            status: 400,
+          };
+        const emailExist = await investCollection.findOne({ email });
+        if (emailExist) {
+          throw {
+            message:
+              "El correo electronico ya esta registrado, por favor registre otro",
+            status: 400,
+          };
+        }
+        invest.status = "prospect";
+        invest.created_at = new Date().toISOString();
+        const result = await investCollection.insertOne(invest);
+        return result;
+      } catch (error) {
+        throw error;
       }
-      invest.status = "prospect";
-      const result = await collection.insertOne(invest);
-      return result;
-    } catch (error) {
-      throw error;
     }
-  });
+  );
 }
 
 module.exports = routes;
