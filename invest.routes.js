@@ -64,17 +64,6 @@ async function routes(fastify, options) {
     }
   });
 
-  const investBodyJsonSchema = {
-    type: "object",
-    required: ["name", "email", "phoneNumber"],
-    properties: {
-      name: { type: "string", minimum: 3, maxLength: 255 },
-      email: { type: "string", minimum: 2, maxLength: 255 },
-      phoneNumber: { type: "string", minimum: 10, maxLength: 13 },
-      possibleInvestment: { type: "string", minimum: 1, maxLength: 20 },
-    },
-  };
-
   fastify.post(
     "/invest",
     {
@@ -84,6 +73,7 @@ async function routes(fastify, options) {
             name: Joi.string().min(1).max(250).required(),
             email: Joi.string().email().required(),
             phoneNumber: Joi.string().min(10).max(12).required(),
+            possibleInvestment: Joi.string(),
           })
           .required(),
       },
